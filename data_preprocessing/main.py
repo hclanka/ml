@@ -3,7 +3,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder
+from sklearn.model_selection import train_test_split
 
 #################################
 ##### Importing the Dataset #####
@@ -43,6 +44,21 @@ matrix[:, 1:3] = imputer.transform(matrix[:, 1:3])
 # The column transformer class transforms the categorical data which is of string by default into vectors such as (0,0,1) or (0,1,0)
 # Each vector represents a different category, Ex: Germany(0,0,1)
 # The reason we convert them into vectors is that the model cannot interpret strings so we convert them into vectors which can be used by the model for better training results
+# this method is called one hot encoding
 ct = ColumnTransformer(transformers=[('encoder',OneHotEncoder(),[0])], remainder='passthrough')
 matrix = np.array(ct.fit_transform(matrix))
-print(matrix)
+
+# Label Encoder converts the values of the dependant variable column into binary values as they contain no and yes
+# This is also to ensure that we use the most of the data we have collected so that the model is accurate
+
+le = LabelEncoder()
+dependant_variable = le.fit_transform(dependant_variable)
+
+#################################################################
+##### Splitting The Data Into The Training Set And Test Set #####
+#################################################################
+
+# train_test_split() function splits the data into 4 different parts
+# the feature / matrix training set, the feature / matrix test set
+# the dependant variable training set, the dependant variable test set
+x_train, x_test, y_train, y_test = train_test_split(matrix, dependant_variable, test_size=0.2, random_state=1)
