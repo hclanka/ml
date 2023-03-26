@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.impute import SimpleImputer
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder
 
 #################################
 ##### Importing the Dataset #####
@@ -33,3 +35,14 @@ imputer = SimpleImputer(missing_values=np.nan,strategy='mean')
 imputer.fit(matrix[:, 1:3])
 # the transform function returns the calculated values into the matrix, and we set the values we get into the missing value slots
 matrix[:, 1:3] = imputer.transform(matrix[:, 1:3])
+
+#####################################
+##### Encoding Categorical Data #####
+#####################################
+
+# The column transformer class transforms the categorical data which is of string by default into vectors such as (0,0,1) or (0,1,0)
+# Each vector represents a different category, Ex: Germany(0,0,1)
+# The reason we convert them into vectors is that the model cannot interpret strings so we convert them into vectors which can be used by the model for better training results
+ct = ColumnTransformer(transformers=[('encoder',OneHotEncoder(),[0])], remainder='passthrough')
+matrix = np.array(ct.fit_transform(matrix))
+print(matrix)
